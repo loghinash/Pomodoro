@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Pomodoro</h1>
+    </header>
+    <main>
+      <div class="board">
+        <div class="board__header">
+          <div class="board__focus-time">
+            <p class="board__focus-time-item board__focus-time-item--active" data-minutes="25" data-pause="5">
+              Classic
+            </p>
+            <p class="board__focus-time-item" data-minutes="50" data-pause="10">Dedicated</p>
+          </div>
+          <div class="board__pause-time">
+            <p class="board__pause-time-item" data-pause="5">shortBreak</p>
+            <p class="board__pause-time-item" data-pause="15">mediumBreak</p>
+            <p class="board__pause-time-item" data-pause="30">longBreak</p>
+          </div>
+        </div>
+        <div class="board__content">
+          <p class="board__time-left">25:00</p>
+        </div>
+        <div class="board__footer">
+          <button class="board__action-button">Start</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

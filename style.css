@@ -1,0 +1,102 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: monospace, sans-serif;
+}
+h1 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* board */
+.board {
+  border: 1px solid orange;
+  max-width: 45vw;
+  margin: 50px auto;
+  padding: 15px;
+  text-align: center;
+  user-select: none;
+}
+
+.board__header {
+  border-bottom: 1px solid rgb(180, 180, 180);
+  font-size: 0.9em;
+
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.board__focus-time,
+.board__pause-time {
+  display: flex;
+  gap: 1rem;
+}
+
+.board__focus-time-item,
+.board__pause-time-item {
+  cursor: pointer;
+}
+
+.board__focus-time-item::after,
+.board__pause-time-item::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 2px;
+  background-color: black;
+  transition: width 0.4s ease;
+}
+
+.board__focus-time-item--active::after,
+.board__pause-time-item--active::after {
+  width: 100%;
+}
+
+.board__content {
+  margin: 50px 0;
+  font-size: 5em;
+  font-weight: bolder;
+}
+
+.board__action-button {
+  font-size: 1.2em;
+  padding: 2px 32px;
+  border: 2px solid rgb(128, 128, 128);
+  color: rgb(80, 80, 80);
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-radius 0.1s ease;
+}
+
+@media screen and (max-width: 1200px) {
+  .board {
+    max-width: 75vw;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .board {
+    max-width: 95vw;
+  }
+
+  .board__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 10px;
+  }
+
+  .board__content {
+    font-size: 4em;
+  }
+
+  .board__footer > .board__action-button {
+    padding: 2px 28px;
+    font-size: 1.1em;
+  }
+}
