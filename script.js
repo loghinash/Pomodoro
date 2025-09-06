@@ -33,6 +33,7 @@ function handlePomodoroModes() {
         mode.classList.add("board__focus-time-item--active");
         displayTime.textContent = `${mode.dataset.minutes}:00`;
         duration = 1000 * 60 * mode.dataset.minutes;
+        isPause = false;
       } else if (mode.classList.contains("board__pause-time-item")) {
         mode.classList.add("board__pause-time-item--active");
         displayTime.textContent = `${mode.dataset.pause}:00`;
