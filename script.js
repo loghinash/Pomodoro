@@ -1,15 +1,16 @@
 const boardButton = document.querySelector(".board__action-button");
 const pomodoroModes = document.querySelectorAll(".board__header p");
 const displayTime = document.querySelector(".board__time-left");
+const notificationAlert = document.querySelector(".notification");
+const bell = new Audio("./assets/bell.mp3");
 let startTime;
-
-let duration = 1000 * 10; // 25 min default
+let duration = 1000 * 60 * 25; // 25 min default
 let isPause = false;
 let interval = null;
 
-const bell = new Audio("./assets/bell.mp3");
 document.addEventListener("DOMContentLoaded", () => {
   handlePomodoroModes();
+  askUserForNotifications();
 });
 
 function runSound(effect) {
@@ -26,17 +27,16 @@ function clearActiveClasses() {
 function handlePomodoroModes() {
   pomodoroModes.forEach((mode) => {
     mode.addEventListener("click", () => {
+      endStudy();
       clearActiveClasses();
       if (mode.classList.contains("board__focus-time-item")) {
         mode.classList.add("board__focus-time-item--active");
         displayTime.textContent = `${mode.dataset.minutes}:00`;
         duration = 1000 * 60 * mode.dataset.minutes;
-        // console.log("FOCUS (duration):", duration);
       } else if (mode.classList.contains("board__pause-time-item")) {
         mode.classList.add("board__pause-time-item--active");
         displayTime.textContent = `${mode.dataset.pause}:00`;
         duration = 1000 * 60 * mode.dataset.pause;
-        // console.log("PAUSE (duration):", duration);
       }
     });
   });
@@ -44,7 +44,7 @@ function handlePomodoroModes() {
 
 function beginStudy() {
   startTime = Date.now();
-  interval = setInterval(updateTimer, 1000);
+  interval = setInterval(updateTimer, 100);
 }
 
 function updateTimer() {
@@ -55,6 +55,8 @@ function updateTimer() {
   if (remaining <= 0) {
     runSound(bell);
     endStudy();
+    sendNotification();
+    // automatic switching between new round or pause
     if (!isPause) {
       setPause();
     } else {
@@ -79,18 +81,15 @@ function resetDisplayTime() {
   if (currentMode.parentElement.classList.contains("board__focus-time")) {
     displayTime.textContent = `${currentMode.dataset.minutes}:00`;
     duration = 1000 * 60 * currentMode.dataset.minutes;
-    // console.log("RESETDISPLAYTIME (duration):", duration);
   } else if (currentMode.parentElement.classList.contains("board__pause-time")) {
     displayTime.textContent = `${currentMode.dataset.pause}:00`;
     duration = 1000 * 60 * currentMode.dataset.pause;
-    // console.log("RESETDISPLAYTIME (duration):", duration);
   }
 }
 
 function endStudy() {
   clearInterval(interval);
   boardButton.textContent = "Start";
-  // console.log("End Study");
 }
 
 function setRound() {
@@ -111,7 +110,6 @@ function setPause() {
   )[0];
   displayTime.textContent = `${currentMode.dataset.pause}:00`;
   duration = 1000 * 60 * currentMode.dataset.pause;
-  // console.log("TAKEPAUSE (DURATION):", duration);
 }
 
 boardButton.addEventListener("click", () => {
@@ -124,3 +122,58 @@ boardButton.addEventListener("click", () => {
     boardButton.textContent = "Start";
   }
 });
+
+async function askUserForNotifications() {
+  setInterval(() => {
+    notificationAlert.classList.add("notification--hidden");
+  }, 15000);
+  const permission = await Notification.requestPermission();
+  if (permission === "granted" || permission === "denied") {
+    notificationAlert.classList.add("notification--hidden");
+  }
+}
+
+function sendNotification() {
+  let message;
+  if (!isPause) {
+    message = studyQuotes[Math.floor(Math.random() * studyQuotes.length)];
+  } else {
+    message = breakQuotes[Math.floor(Math.random() * studyQuotes.length)];
+  }
+  new Notification("Pomodoro", {
+    body: message,
+    icon: "./assets/tomato.png",
+  });
+}
+
+const studyQuotes = [
+  "📖 Study session complete! Time for a break 👌",
+  "🎉 Great job! Pomodoro finished — take a well-deserved break ☕",
+  "Focus round complete ✅ Recharge time!",
+  "Done! ✨ Rest for a bit before the next sprint.",
+  "Well done! 🎯 Time to recharge with a short break.",
+  "Focus sprint complete 🔥 Step away for a moment.",
+  "Another Pomodoro down ✅ Rest your mind.",
+  "Done focusing 🧘 Take a breather!",
+  "Pomodoro finished 🏆 Take a short pause.",
+  "Nice focus! 🌟 Time to rest your eyes.",
+  "Another round done ✅ Recharge before the next.",
+  "You crushed it 💪 Enjoy your break!",
+  "Done studying 🎉 Breathe and relax.",
+];
+const breakQuotes = [
+  "⏰ Break’s over! Back to focus 💪",
+  "Hope you enjoyed your rest 🌿 Let’s dive back in!",
+  "Time to refocus 🧠 Next Pomodoro starts now.",
+  "Break finished ✅ Keep up the momentum 🚀",
+  "Relax time is over ⏳ Back to work mode!",
+  "⏰ Ready for the next round? Let’s go!",
+  "Back to focus mode 🚀 You’ve got this.",
+  "Let’s dive back in 📚 Another Pomodoro awaits.",
+  "Focus time 🧠 Let’s keep the streak alive!",
+  "⏳ Break time’s up — let’s get productive!",
+  "Back in action ⚡ Start your next Pomodoro.",
+  "Hope you’re refreshed 🌿 Time to focus again.",
+  "Ready, set, study 📚 Your next session starts now.",
+  "Break over ✅ Keep building that rhythm.",
+];
