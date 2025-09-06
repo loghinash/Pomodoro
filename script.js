@@ -44,7 +44,7 @@ function handlePomodoroModes() {
 
 function beginStudy() {
   startTime = Date.now();
-  interval = setInterval(updateTimer, 100);
+  interval = setInterval(updateTimer, 1000);
 }
 
 function updateTimer() {
