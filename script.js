@@ -91,6 +91,7 @@ function resetDisplayTime() {
 
 function endStudy() {
   clearInterval(interval);
+  isPause = false;
   boardButton.textContent = "Start";
 }
 
