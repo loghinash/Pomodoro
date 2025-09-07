@@ -38,6 +38,7 @@ function handlePomodoroModes() {
         mode.classList.add("board__pause-time-item--active");
         displayTime.textContent = `${mode.dataset.pause}:00`;
         duration = 1000 * 60 * mode.dataset.pause;
+        isPause = true; // must commit
       }
     });
   });
@@ -45,7 +46,7 @@ function handlePomodoroModes() {
 
 function beginStudy() {
   startTime = Date.now();
-  interval = setInterval(updateTimer, 1000);
+  interval = setInterval(updateTimer, 200);
 }
 
 function updateTimer() {
@@ -57,13 +58,13 @@ function updateTimer() {
     runSound(bell);
     endStudy();
     sendNotification();
-    // automatic switching between new round or pause
     if (!isPause) {
       setPause();
+      isPause = true;
     } else {
       setRound();
+      isPause = false;
     }
-    isPause = !isPause;
   } else {
     const minutes = Math.floor(remaining / 1000 / 60);
     const seconds = Math.ceil((remaining / 1000) % 60);
@@ -99,8 +100,15 @@ function setRound() {
       mode.classList.contains("board__focus-time-item--active") ||
       mode.classList.contains("board__pause-time-item--active")
   )[0];
-  displayTime.textContent = `${currentMode.dataset.minutes}:00`;
-  duration = 1000 * 60 * currentMode.dataset.minutes;
+  if (currentMode.parentElement.classList.contains("board__pause-time")) {
+    displayTime.textContent = `${currentMode.dataset.pause}:00`;
+    duration = 1000 * 60 * currentMode.dataset.pause;
+    isPause = true;
+  } else if (currentMode.parentElement.classList.contains("board__focus-time")) {
+    displayTime.textContent = `${currentMode.dataset.minutes}:00`;
+    duration = 1000 * 60 * currentMode.dataset.minutes;
+    isPause = false;
+  }
 }
 
 function setPause() {
@@ -135,11 +143,14 @@ async function askUserForNotifications() {
 }
 
 function sendNotification() {
+  function getQuote(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
   let message;
   if (!isPause) {
-    message = studyQuotes[Math.floor(Math.random() * studyQuotes.length)];
+    message = getQuote(studyQuotes);
   } else {
-    message = breakQuotes[Math.floor(Math.random() * studyQuotes.length)];
+    message = getQuote(breakQuotes);
   }
   new Notification("Pomodoro", {
     body: message,
